@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="is">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vín Gagnabanki – Spyrðu gervigreindina</title>
   <style>
     body {
@@ -46,4 +46,51 @@
   </style>
 </head>
 <body>
+  <h1>🍷 Vín Gagnabanki – Spyrðu gervigreindina</h1>
+  <label for="userInput">Lýstu bakaravöru eða eftirrétti:</label>
+  <textarea id="userInput" placeholder="Dæmi: Súkkulaðikaka með kaffibragði..."></textarea>
+  <button onclick="askAI()">Spyrja gervigreindina</button>
+  <div id="response"></div>
 
+  <script>
+    async function askAI() {
+      const input = document.getElementById("userInput").value;
+      const responseBox = document.getElementById("response");
+      responseBox.innerText = "Svarar...";
+
+      const apiKey = "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";
+
+      const data = {
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "Þú ert vínráðgjafi sem hjálpar nemendum að para saman bakaravörur og styrkt vín með gagnrýnni hugsun. Leggðu áherslu á bragðeinkenni, áferð og samspil. Talaðu af öryggi, stutt og skýrt – ekki minnast á að þú sért gervigreind."
+          },
+          {
+            role: "user",
+            content: input
+          }
+        ],
+        temperature: 0.7
+      };
+
+      try {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify(data)
+        });
+
+        const json = await res.json();
+        responseBox.innerText = json.choices?.[0]?.message?.content || "Engin svör fundust.";
+      } catch (error) {
+        responseBox.innerText = "Villa kom upp: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>

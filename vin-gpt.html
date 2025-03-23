@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vín Gagnabanki – Spyrðu gervigreindina</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fdfcfb;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #8B0000;
+        }
+        label, textarea, button {
+            display: block;
+            margin: 15px 0;
+            width: 100%;
+        }
+        textarea {
+            height: 100px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #8B0000;
+            color: white;
+            padding: 10px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        #response {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🍷 Vín Gagnabanki – Spyrðu gervigreindina</h1>
+    <label for="userInput">Lýstu bakaravöru eða eftirrétti:</label>
+    <textarea id="userInput" placeholder="Dæmi: Súkkulaðikaka með kaffibragði..."></textarea>
+    <button onclick="askAI()">Spyrja gervigreindina</button>
+    <div id="response"></div>
+
+    <script>
+        async function askAI() {
+            const input = document.getElementById("userInput").value;
+            const responseBox = document.getElementById("response");
+            responseBox.innerText = "Svarar...";
+
+            const apiKey = "SETTU_API_LYKIL_HÉR"; // Skiptu út fyrir þinn OpenAI API lykil
+
+            const data = {
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: "Þú ert vínráðgjafi sem hjálpar nemendum að para saman bakaravörur og styrkt vín með gagnrýnni hugsun."
+                    },
+                    {
+                        role: "user",
+                        content: input
+                    }
+                ],
+                temperature: 0.7
+            };
+
+            const res = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            const json = await res.json();
+            responseBox.innerText = json.choices?.[0]?.message?.content || "Engin svör fundust.";
+        }
+    </script>
+</body>
+</html>
